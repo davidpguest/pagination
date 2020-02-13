@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Pagination</title>
+		<style type="text/css">
+			body { background:#ccc; color: #333; text-align: left;  font-family: Arial, sans-serif; font-size: 10pt;  }
+			h2 { margin: 10px; color: #333; }
+			#pad { margin: 10px; background: #fff; padding: 5px; width: 890px; height: 200px; overflow:scroll; font-family: monospace;}
+			#pages div { border: none; width: 200px; height: 250px; margin: 10px; background: #fff;  text-align: left; padding: 5px; float: left;  }
+			#testpad { margin: 0 auto; border: none; width: 200px; margin: 10px; text-align: left; padding: 5px;}
+			p { margin: 0; padding: 0; }
+			p { text-indent: 0.3cm; }
+			p.noindent { text-indent: 0cm; }
+		</style>
+	</head>
+	<body>
+		<h2>Input text:</h2>
+		<div id="pad"><p class="noindent">In the mountains of Tibet they know of a class of secret treasures, hidden long ago by old masters. Some might be objects, books, inscriptions but others lack physical form, existing only as concepts or fragments of language, concealed in the air, in the common wisdom, in the landscape of the mind.</p>
+<p>When I told you this, you wrinkled your nose and brushed fallen blossom from your skirt and continued your descriptions of isotopes and particles, determined, as you were then, to bind yourself and all of us to the new certainties, to take up positions in laboratories and publish articles, conduct experiments and to think, often and endlessly, threading your way into institutes, writing letters and delivering talks and, as the colour went out of your face and the world filled with red flags and grey uniforms, boarding trains to distant lands, with a few pennies in your coat pockets and counting yourself lucky for that, until, in the furious, energetic midst of that flux, you reached into the thin shadows of a winter's day and seized upon a germ, a seed, a spark with the power to spread like an inferno through cold matter, disturbing all the immortalities inside.</p>
+<p>By the time news travelled back to the quiet suburbs where we used to walk, questions of international prizes and medals had lost their meaning. I thought rather of ancient knowledge, containment, and the discovery of light.
+</p></div>
+		<div id="testpad"></div>
+		<div id="output"></div>
+		<h2>Paginated output:</h2>
+		<div id="pages"></div>
+    
+<script type="text/javascript">
+
+function splitparas(text) {
+	var paras = text.split("</p>");
+	var latest = "";
+	var testdiv = document.getElementById("testpad");
+	var finalpages = [];
+	var base = "";
+	var maxpageheight = 215;
+	for(var i=0; i<paras.length; i++) {
+		if(paras[i].length > 0) {
+			var comps = paras[i].split(">");
+			var parastart = comps[0] + ">";
+			base += parastart;
+			var words = comps[1].split(" ");
+			for(var w=0; w<words.length; w++) {
+				testdiv.innerHTML = base + words[w] + " " + "</p>";
+				if(testdiv.offsetHeight <= maxpageheight) {
+					base += words[w] + " ";
+				} else {
+					base += "</p>";
+					finalpages.push(base);
+					if (w > 0) {
+						base = '<p class="noindent">';
+					} else {
+						base = parastart;
+					}
+					base += words[w] + " ";
+				} 
+			}
+			base += "</p>";
+		}
+	}
+	finalpages.push(base);
+	document.body.removeChild(testdiv);
+	return finalpages;
+}
+
+function renderpages(pages) {
+	for(var p=0;p<pages.length;p++) {
+		var newdiv = document.createElement("div");
+		var container = document.getElementById("pages");
+		newdiv.innerHTML = pages[p];
+		container.appendChild(newdiv);
+	}
+}
+
+var pad = document.getElementById("pad");
+var pages = splitparas(pad.innerHTML);
+renderpages(pages);
+
+</script>
+
+	</body>
+</html>
